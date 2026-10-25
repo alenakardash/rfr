@@ -11,7 +11,6 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
-import java.util.regex.Pattern;
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
 public final class ProfilePage {
@@ -33,8 +32,7 @@ public final class ProfilePage {
     this.page = page;
     this.avatarInput = page.getByLabel("Update avatar", new Page.GetByLabelOptions().setExact(true));
     this.emptyAvatar = page.getByRole(AriaRole.MAIN).getByTestId("PersonIcon");
-    this.avatar = page.getByRole(AriaRole.MAIN).getByRole(AriaRole.IMG,
-        new Locator.GetByRoleOptions().setName(Pattern.compile("^$")));
+    this.avatar = page.getByRole(AriaRole.MAIN).locator("img[src^='data:image/']:not([alt])");
     this.usernameInput = page.getByLabel("Username", new Page.GetByLabelOptions().setExact(true));
     this.firstNameInput = page.getByLabel("First Name", new Page.GetByLabelOptions().setExact(true));
     this.surnameInput = page.getByLabel("Surname", new Page.GetByLabelOptions().setExact(true));
@@ -58,7 +56,7 @@ public final class ProfilePage {
   @Step("Перезагрузить страницу профиля")
   public ProfilePage reload() {
     page.reload();
-    return new ProfilePage(page);
+    return this;
   }
 
   @Step("Загрузить аватар: {file}")
